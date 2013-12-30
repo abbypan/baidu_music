@@ -4,7 +4,7 @@ var system = require('system');
 var utils = require('utils');
 
 var casper = require('casper').create({
-    //{logLevel: 'debug', verbose: true}, 
+    //logLevel: 'debug', verbose: true, 
     pageSettings: {
         loadImages:  false,        
     loadPlugins: false  // not load NPAPI plugins (Flash, Silverlight, ...)
@@ -22,16 +22,26 @@ start = 20*(start-1);
 
 var url = 
 "http://music.baidu.com/search?key=" + music_search + "&start=" + start;
+//"http://music.baidu.com/search/song?key=" + music_search + "&start=" + start +'&size=20';
 
 if(music_id) fs.write(music_id, '', 'w');
 
 casper.start(url);
 
+//casper.start('http://music.baidu.com');
+//casper.wait(1000, function(){
+    //this.fill('form[action="/search"]', { key : music_search }, true);
+//})
+//casper.thenOpen(url);
+
 casper.wait(1000, function(){
             var song_x = '//div[@class="search-song-list song-list song-list-hook"]//li[@class="bb-dotimg clearfix song-item-hook  "]';
             var song_info = this.getElementsAttribute(x(song_x), 'data-songitem');
             for(var i in song_info){
-                var info = JSON.parse(song_info[i]);
+                var s= song_info[i].replace(/\\u003C.*?\\u003E/g, '');
+                //console.log(s);
+                var info = JSON.parse(s);
+                //require('utils').dump(info);
                 var res = info.songItem;
                 var sid = parseInt(res.sid);
                 if(! sid) continue;

@@ -33,13 +33,18 @@ casper.eachThen(read_music_file(music_id), function(item){
         var title = item.data[1];
         var song_id = item.data[2];
         //console.log("ask url : " + artist + ',' + title + ',' + song_id);
-        var url = 'http://musicmini.baidu.com/app/link/getLinks.php?linkType=1&isLogin=1&clientVer=8.2.10.23&isHq=1&songAppend=&isCloud=0&hasMV=1&songId=' +
-        song_id ;
+        //var url = 'http://musicmini.baidu.com/app/link/getLinks.php?linkType=1&isLogin=1&clientVer=8.2.10.23&isHq=1&songAppend=&isCloud=0&hasMV=1&songId=' +
+        //http://musicmini.baidu.com/app/link/getLinks.php?songId=23194943
+        var url = 'http://musicmini.baidu.com/app/link/getLinks.php?songId=' + song_id ;
        // +    '&songTitle=' + title + '&songArtist=' + artist;
        
         if(song_id){
             this.thenOpen(url, function(){
-                var song_info = eval(this.getHTML('body'));
+                //var song_info = eval(this.getHTML('body'));
+                var s = this.getHTML('body');
+                //console.log(url, s);
+                if(! s.match(/^\[/)) return;
+                var song_info = JSON.parse(s);
                 if(! song_info) return;
                 if(! song_info[0]) return;
 
