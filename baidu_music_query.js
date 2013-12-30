@@ -48,6 +48,7 @@ casper.wait(1000, function(){
 casper.run();
 
 function format_song_string(s){
-        return s.replace(/\s+/g, '-').replace(/<[^>]+>/g, '').
-            replace(/[,\\\/\$]/g, ''); 
+        var x = s.replace(/\s+/g, '-').replace(/<[^>]+>/g, '').
+            replace(/[,\\\/\$]/g, '-'); 
+        return x || 'unknown';
 }
