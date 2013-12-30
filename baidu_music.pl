@@ -4,10 +4,11 @@ use FindBin;
 
 our $DIR=$FindBin::RealBin;
 
-getopt('upcmaotlf', \%opt);
+getopt('upcmaotlfqi', \%opt);
 $opt{t} ||= 'xspf';
 $opt{l} ||= 0;
 $opt{f} ||='';
+$opt{i} ||= 1;
 
 if(exists $opt{u} and exists $opt{p} and  exists $opt{c}){
     system("casperjs $DIR/baidu_login.js $opt{u} $opt{p} $opt{c}");
@@ -20,6 +21,9 @@ if(exists $opt{m}){
     $opt{id} = "$opt{a}.id";
     $opt{id}=~s#^.*/##;
     system("casperjs $DIR/baidu_music_album.js $opt{a} $opt{id}");
+}elsif(exists $opt{q}){
+    $opt{id} = $opt{o} ? "$opt{o}.id" : "query-".int(rand(10000000)).".id";
+    system(qq[casperjs $DIR/baidu_music_query.js "$opt{q}" "$opt{id}" --page=$opt{i}]);
 }
 
 if($opt{t} eq 'collect'){
