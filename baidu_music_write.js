@@ -37,6 +37,7 @@ function music_html_callback(){
     return function(m){
             return '<li><a href="#" data-src="' + m[4]  + '">' + 
                 m[0] +'-' + m[1] + 
+                ',' + m[2] + ' kbps' +
                 "</a></li>";
         }
 }

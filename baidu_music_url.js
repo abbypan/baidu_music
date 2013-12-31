@@ -61,8 +61,8 @@ casper.eachThen(read_music_file(music_id), function(item){
                     u = files[song_level];
                 }
 
-                artist = song_info[0]['song_artist'];
-                title = song_info[0]['song_title'];
+                artist = format_song_string(song_info[0]['song_artist']);
+                title = format_song_string(song_info[0]['song_title']);
                 var album_img = song_info[0]["album_image_url"] || '#';
                 var w_str = [ artist, title , u["kbps"], u["format"], 
                 u["url"].replace(/&amp;.*$/,''), album_img ].join(" ");
@@ -87,4 +87,10 @@ function read_music_file(f) {
         res.push(info);
     }
     return res;
+}
+
+function format_song_string(s){
+        var x = s.replace(/\s+/g, '-').replace(/<[^>]+>/g, '').
+            replace(/[,\\\/\$]/g, '-'); 
+        return x || 'unknown';
 }
