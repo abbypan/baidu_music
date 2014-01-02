@@ -21,35 +21,29 @@ casper.start(album_url);
 
 var album_info = new Array();
 casper.then(function(){
-        var album_xp = x('//*[@class="album-name"]');
-           
-            var album_name = this.exists(album_xp) ? this.getHTML('.album-name') : this.getHTML('h2.name');
-            //console.log('album: ' + album_name);
-        var ul = this.getHTML('div.body').
-            match(/{ 'songItem': ({.+?}) }/g)
-            ;
-            for(var i in ul){
-                var li = ul[i].match(/'sid': '(.+?)', 'sname': '(.+?)', 'author': '(.+?)'/);
-                var song_info = [ li[3].replace(/\s+/g,'-'), 
-                    li[2].replace(/\s+/g,'-'), 
-                    li[1] ].join(" ");
+    //var album_xp = x('//*[@class="album-name"]');
+    //var album_name = this.exists(album_xp) ? this.getHTML('.album-name') : this.getHTML('h2.name');
+    //console.log('album: ' + album_name);
+    var ul = this.getHTML(x('//div[@class="body "]')).
+    match(/{ 'songItem': ({.+?}) }/g);
 
-                    //console.log(song_info);
-                album_info.push(song_info);
-            }
+for(var i in ul){
+    var li = ul[i].match(/'sid': '(.+?)', 'sname': '(.+?)', 'author': '(.+?)'/);
+    var song_info = [ li[3].replace(/\s+/g,'-'), 
+    li[2].replace(/\s+/g,'-'), 
+    li[1] ].join(" ");
 
-            //var dst_file = music_id || album_name +'.txt';
-            var s = album_info.join("\n");
-            if(music_id){
-                fs.write(music_id, s, 'w');
-            }else{
-                console.log(s);
-            }
-            
-            //fs.write(dst_file, album_info.join("\n"), 'w');
-            //console.log(album_info.join("\n"));
-    });
-    
+album_info.push(song_info);
+}
+
+var s = album_info.join("\n");
+if(music_id){
+    fs.write(music_id, s, 'w');
+}else{
+    console.log(s);
+}
+});
+
 
 casper.run();
 
