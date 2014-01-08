@@ -33,9 +33,8 @@ casper.eachThen(read_music_file(music_id), function(item){
         var title = item.data[1];
         var song_id = item.data[2];
         //console.log("ask url : " + artist + ',' + title + ',' + song_id);
-        //var url = 'http://musicmini.baidu.com/app/link/getLinks.php?linkType=1&isLogin=1&clientVer=8.2.10.23&isHq=1&songAppend=&isCloud=0&hasMV=1&songId=' +
-        //http://musicmini.baidu.com/app/link/getLinks.php?songId=23194943
-        var url = 'http://musicmini.baidu.com/app/link/getLinks.php?songId=' + song_id ;
+        //http://musicmini.baidu.com/app/link/getLinks.php?linkType=1&isLogin=1&clientVer=8.2.10.23&isHq=1&songAppend=&isCloud=0&hasMV=1&songId=599725&songTitle=%E9%AC%BC%E8%BF%B7%E5%BF%83%E7%AA%8D&songArtist=%E6%9D%8E%E5%AE%97%E7%9B%9B
+        var url = 'http://musicmini.baidu.com/app/link/getLinks.php?linkType=1&isLogin=1&clientVer=8.2.10.23&isHq=1&songAppend=&isCloud=0&hasMV=1&songId=' + song_id ;
        // +    '&songTitle=' + title + '&songArtist=' + artist;
        
         if(song_id){
@@ -55,11 +54,12 @@ casper.eachThen(read_music_file(music_id), function(item){
                 if(song_level>=file_cnt) song_level = file_cnt;
                 var u = files[song_level];
 
-                if(music_format && u["format"]!=music_format){
+                if(music_format && ( u["format"] != music_format )){
                     song_level++;
                     if(song_level>=file_cnt) song_level = file_cnt;
                     u = files[song_level];
                 }
+                //console.log(song_level);
 
                 artist = format_song_string(song_info[0]['song_artist']);
                 title = format_song_string(song_info[0]['song_title']);
