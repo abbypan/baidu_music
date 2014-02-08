@@ -19,13 +19,16 @@ perl baidu_music.pl -m music.txt -t xspf -o vlc.xspf
 perl baidu_music.pl -m music.txt -t bat -o wget.bat
 perl baidu_music.pl -m music.txt -t ps1 -o web.ps1
 
+#根据id生成xspf
+perl baidu_music.pl -i music_id.txt -t ps1 -o web.ps1
+
 #根据album_url生成xspf
 perl baidu_music.pl -a http://music.baidu.com/album/177366 -t xspf -o lzs.xspf
 perl baidu_music.pl -a http://music.baidu.com/film/70663646 -t xspf -o lzs.xspf
 
 #根据指定关键字查询音乐
 perl baidu_music.pl -q "小楼古风精选 Finale" -t xspf -o finale.xspf
-perl baidu_music.pl -q "河图" -i 3 -t xspf -o ht.xspf
+perl baidu_music.pl -q "河图" -P 3 -t xspf -o ht.xspf
 ```
 
 参数说明：
@@ -34,13 +37,14 @@ u : 用户名
 p : 密码
 c : cookie文件
 m : 音乐文件
+i : 音乐id文件
 a : 专辑url，例如 http://music.baidu.com/album/177366
 o : 目标文件，不指定则直接输出到stdout
 t : 目标动作类型，例如 xspf 播放列表，wget 批量下载文件，收藏歌曲
 l : 音乐文件音质，0 (最好) ~ 3 (最差)，默认取0
 f : 音乐文件格式(flac/mp3)
 q : 查询音乐的关键字
-i : 查询音乐，取其中第 i 页的结果
+P : 查询音乐，取其中第 P 页的结果
 ```
 
 处理过程
