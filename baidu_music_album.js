@@ -3,6 +3,11 @@ var fs = require('fs');
 var system = require('system');
 var utils = require('utils');
 
+function decode(s) {
+    return unescape(s.replace(/\\(u[0-9a-fA-F]{4})/gm, '%$1'));
+}
+
+
 var casper = require('casper').create({
     //logLevel: 'debug', verbose: true, 
     pageSettings: {
@@ -24,17 +29,23 @@ casper.then(function(){
     //var album_xp = x('//*[@class="album-name"]');
     //var album_name = this.exists(album_xp) ? this.getHTML('.album-name') : this.getHTML('h2.name');
     //console.log('album: ' + album_name);
-    var ul = this.getHTML(x('//div[@class="body "]')).
-    match(/{ 'songItem': ({.+?}) }/g);
+    var body_html = this.getHTML(x('//div[@class="body "]'));
+    //console.log(body_html);
+    var ul = body_html.match(/songItem.*?({.+?})/g);
 
-for(var i in ul){
-    var li = ul[i].match(/'sid': '(.+?)', 'sname': '(.+?)', 'author': '(.+?)'/);
-    var song_info = [ li[3].replace(/\s+/g,'-'), 
-    li[2].replace(/\s+/g,'-'), 
-    li[1] ].join(" ");
+    for(var i in ul){
+        var nul = ul[i].replace(/&quot;/g,"'").replace(/^/, "'");
+        var sid = nul.match(/'sid':'(.+?)'/);
+        var author = nul.match(/'author':'(.+?)'/);
+        var sname = nul.match(/'sname':'(.+?)'/);
+
+        var song_info = [ 
+    decode(author[1]).replace(/\s+/g,'-'), 
+    decode(sname[1]).replace(/\s+/g,'-'), 
+    decode(sid[1]) ].join(" ");
 
 album_info.push(song_info);
-}
+    }
 
 var s = album_info.join("\n");
 if(music_id){
