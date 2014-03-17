@@ -14,10 +14,10 @@ var casper = require('casper').create({
 casper.userAgent('Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:18.0) Gecko/20130119 Firefox/18.0');
 
 var callback_info = {
-    xspf : music_xspf_callback, 
-    ps1 :  music_powershell_callback, 
-    html : music_html_callback, 
-    bat :  music_wget_callback 
+    xspf : music_xspf_cb, 
+    online : music_online_cb, 
+    html :  music_html_cb, 
+    bat :  music_wget_cb 
 };
 
 casper.start('http://music.baidu.com');
@@ -33,16 +33,18 @@ casper.then(function(){
 
 casper.run();
 
-function music_html_callback(){
+function music_online_cb(){
     return function(m){
-            return '<li><a href="#" data-src="' + m[4]  + '">' + 
+            return '<li><a href="#" data-src="' + m[4]  + '" title="' +
+                m[0] +'-' + m[1] + '"' + 
+                '>' + 
                 m[0] +'-' + m[1] + 
                 ',' + m[2] + ' kbps' +
                 "</a></li>";
         }
 }
 
-function music_xspf_callback(){
+function music_xspf_cb(){
     return {
         head : '<?xml version="1.0" encoding="UTF-8"?>' +
 '<playlist version="1" xmlns="http://xspf.org/ns/0/">' + 
@@ -59,17 +61,22 @@ function music_xspf_callback(){
     }
 }
 
-function music_powershell_callback(){
-    return function(m){ 
-            return [ 'Invoke-WebRequest ' , 
-                    '"' + m[4] + '" -Method GET -OutFile', 
-        '"' + m[0] +'-' + m[1]+'.'+m[3] + '";' 
-                ].join(' ');
+function music_html_cb(){
+    return {
+        head : '<html><head>' +
+' <meta charset="utf-8">' + 
+    '</head><body>', 
+        tail : '</body></html>', 
+        item : function(m){
+            return [ '<a href="' + m[4]  + '">',
+                m[0]+'-'+m[1],
+                "</a><br/>"].join("");        
+        }
     }
 
 }
 
-function music_wget_callback(){
+function music_wget_cb(){
     return function(m){ 
     return [ 'wget' , '-c', '"' + m[4] + '"', 
         '-O', '"' + m[0]+'-'+m[1]+'.'+m[3] + '"' ].join(' ');

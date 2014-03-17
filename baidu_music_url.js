@@ -2,6 +2,7 @@ var x = require('casper').selectXPath;
 var fs = require('fs');
 var system = require('system');
 var utils = require('utils');
+var clientutils = require('clientutils').create();
 
 var casper = require('casper').create({
     //{logLevel: 'debug', verbose: true}, 
@@ -29,68 +30,88 @@ search_list = read_music_file(music_id);
 if(music_url) fs.write(music_url, '', 'w');
 
 casper.eachThen(read_music_file(music_id), function(item){
-        var artist = item.data[0];
-        var title = item.data[1];
-        var song_id = item.data[2];
-        //console.log("ask url : " + artist + ',' + title + ',' + song_id);
-        //http://musicmini.baidu.com/app/link/getLinks.php?linkType=1&isLogin=1&clientVer=8.2.10.23&isHq=1&songAppend=&isCloud=0&hasMV=1&songId=599725&songTitle=%E9%AC%BC%E8%BF%B7%E5%BF%83%E7%AA%8D&songArtist=%E6%9D%8E%E5%AE%97%E7%9B%9B
-        var url = 'http://musicmini.baidu.com/app/link/getLinks.php?linkType=1&isLogin=1&clientVer=8.2.10.23&isHq=1&songAppend=&isCloud=0&hasMV=1&songId=' + song_id ;
-       // +    '&songTitle=' + title + '&songArtist=' + artist;
-       
-        if(song_id){
-            this.thenOpen(url, function(){
-                //var song_info = eval(this.getHTML('body'));
-                var s = this.getHTML('body');
-                //console.log(url, s);
-                if(! s.match(/^\[/)) return;
-                var song_info = JSON.parse(s);
-                if(! song_info) return;
-                if(! song_info[0]) return;
+    var artist = item.data[0];
+    var title = item.data[1];
+    var song_id = item.data[2];
 
-                var files = song_info[0]["file_list"];
-                var file_cnt = files.length;
-                var song_level = music_level;
+    var rate=0;
+    if(song_id){
+        var url = "http://musicmini.baidu.com/app/link/getLinks.php";
+        var param_str = '{"songId":"'+song_id+'","songAppend":"","linkType":1,"isLogin":1,"clientVer":"","isHq":1,"isCloud":0,"hasMV":1,"noFlac":0,"rate":0}';
+        var param = clientutils.encode(param_str);
+        this.thenOpen(url, {
+            method: 'post', 
+            data: {
+                'param' : param
+            }
+        }, function(){
+            //var song_info = eval(this.getHTML('body'));
+            var s = this.getHTML('body');
+            if(! s.match(/^\[/)) return;
+            var song_info = JSON.parse(s);
+            if(! song_info) return;
+            if(! song_info[0]) return;
 
+            var files = song_info[0]["file_list"];
+            var file_cnt = files.length;
+            var song_level = music_level;
+
+            if(song_level>=file_cnt) song_level = file_cnt;
+            var u = files[song_level];
+
+            if(music_format && ( u["format"] != music_format )){
+                song_level++;
                 if(song_level>=file_cnt) song_level = file_cnt;
-                var u = files[song_level];
+                u = files[song_level];
+            }
 
-                if(music_format && ( u["format"] != music_format )){
-                    song_level++;
-                    if(song_level>=file_cnt) song_level = file_cnt;
-                    u = files[song_level];
-                }
-                //console.log(song_level);
 
-                artist = format_song_string(song_info[0]['song_artist']);
-                title = format_song_string(song_info[0]['song_title']);
-                var album_img = song_info[0]["album_image_url"] || '#';
-                var w_str = [ artist, title , u["kbps"], u["format"], 
-                u["url"].replace(/&amp;.*$/,''), album_img ].join(" ");
-                if(music_url){
-                    fs.write(music_url, w_str+"\n", 'a'); 
-                }else{
-                    console.log(w_str);
-                }
+            rate=u["kbps"];
+            this.thenOpen(url, {
+                method: 'post', 
+                data: {
+                    'param' : clientutils.encode(
+                        '{"songId":"'+song_id+'","songAppend":"","linkType":2,"isLogin":1,"clientVer":"","isHq":1,"isCloud":0,"hasMV":1,"noFlac":0,"rate":'+rate+'}'
+                            )
+                        }
+                }, function(){
+                    var s = this.getHTML('body');
+                    var song_info = JSON.parse(s);
+                    var u = song_info[0]["file_list"][0];
+                    artist = format_song_string(song_info[0]['song_artist']);
+                    title = format_song_string(song_info[0]['song_title']);
+                    var album_img = song_info[0]["album_image_url"] || '#';
+
+                    var w_str = [ artist, title , u["kbps"], u["format"], 
+                u["url"].replace(/&amp;.*$/,''),
+                album_img ].join(" ");
+            if(music_url){
+                fs.write(music_url, w_str+"\n", 'a'); 
+            }else{
+                console.log(w_str);
+            }
+                });
             });
+
         }
     });
-    
 
-casper.run();
 
-function read_music_file(f) {
-    var music_data = fs.read(f).match(/[^\r\n]+/g);
-    var res = new Array();
-    for(var m in music_data){
-        var info = music_data[m].split(/\s+/g);
-        if(!info) continue;
-        res.push(info);
+    casper.run();
+
+    function read_music_file(f) {
+        var music_data = fs.read(f).match(/[^\r\n]+/g);
+        var res = new Array();
+        for(var m in music_data){
+            var info = music_data[m].split(/\s+/g);
+            if(!info) continue;
+            res.push(info);
+        }
+        return res;
     }
-    return res;
-}
 
-function format_song_string(s){
+    function format_song_string(s){
         var x = s.replace(/\s+/g, '-').replace(/<[^>]+>/g, '').
             replace(/[,\\\/\$]/g, '-'); 
         return x || 'unknown';
-}
+    }
