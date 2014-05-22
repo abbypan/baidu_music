@@ -15,10 +15,11 @@ casper.userAgent('Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:18.0) Gecko/201301
 
 var callback_info = {
     xspf : music_xspf_cb, 
-    online : music_online_cb, 
+    online : null, 
     html :  music_html_cb, 
     bat :  music_wget_cb 
 };
+
 
 casper.start('http://music.baidu.com');
 
@@ -33,17 +34,6 @@ casper.then(function(){
 
 casper.run();
 
-function music_online_cb(){
-    return function(m){
-            return '<li><a href="#" data-src="' + m[4]  + '" title="' +
-                m[0] +'-' + m[1] + '"' + 
-                '>' + 
-                m[0] +'-' + m[1] + 
-                ',' + m[2] + ' kbps' +
-                "</a></li>";
-        }
-}
-
 function music_xspf_cb(){
     return {
         head : '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -52,10 +42,10 @@ function music_xspf_cb(){
         tail : '</trackList></playlist>', 
         item : function(m){
             return [ "<track>", 
-                "<location>" + m[4]  + "</location>", 
-                "<image>" + m[5]  + "</image>", 
-                "<title>" + m[1]  + "</title>", 
-                "<creator>" + m[0]  + "</creator>", 
+                "<location>" + m["url"]  + "</location>", 
+                "<image>" + m["album_img"]  + "</image>", 
+                "<title>" + m["title"]  + "</title>", 
+                "<creator>" + m["artist"]  + "</creator>", 
                 "</track>"].join("\n");        
         }
     }
@@ -68,8 +58,8 @@ function music_html_cb(){
     '</head><body>', 
         tail : '</body></html>', 
         item : function(m){
-            return [ '<a href="' + m[4]  + '">',
-                m[0]+'-'+m[1],
+            return [ '<a href="' + m["url"]  + '">',
+                m["artist"]+'-'+m["title"],
                 "</a><br/>"].join("");        
         }
     }
@@ -78,15 +68,19 @@ function music_html_cb(){
 
 function music_wget_cb(){
     return function(m){ 
-    return [ 'wget' , '-c', '"' + m[4] + '"', 
-        '-O', '"' + m[0]+'-'+m[1]+'.'+m[3] + '"' ].join(' ');
+    return [ 'wget' , '-c', '"' + m["url"] + '"', 
+        '-O', '"' + m["artist"]+'-'+m["title"]+'.'+m["format"] + '"' ].join(' ');
     }
 }
 
 function write_music_file(music_url, dst_file, cb){
-    if( utils.isUndefined(dst_file) ) return;
+    //if( utils.isUndefined(dst_file) ) return;
+    var src_str = read_music_file(music_url);
+
+    var s;
+    if(cb){
     var callback = cb();
-    var src = read_music_file(music_url);
+    var src = JSON.parse(src_str);
     var dst = new Array();
     var map_cb = callback.item || callback;
     for(var i in src){
@@ -94,9 +88,13 @@ function write_music_file(music_url, dst_file, cb){
         dst.push(s);
     }
 
-    var s = dst.join("\n");
+    s = dst.join("\n");
     if(callback.head) s = callback.head + "\n" + s;
     if(callback.tail) s =  s + "\n" + callback.tail;
+    }else{
+       s = src_str; 
+    }
+
     if(dst_file){
     fs.write(dst_file, s, 'w');
     }else{
@@ -106,11 +104,6 @@ function write_music_file(music_url, dst_file, cb){
 
 function read_music_file(f) {
     var music_data = fs.read(f).match(/[^\r\n]+/g);
-    var res = new Array();
-    for(var m in music_data){
-        var info = music_data[m].split(/\s+/g);
-        if(!info) continue;
-        res.push(info);
-    }
-    return res;
+    var s = "[" + music_data.join(",\n") + "]";
+    return s;
 }

@@ -4,7 +4,7 @@ use FindBin;
 use Encode::Locale;
 use Encode;
 use Data::Dumper;
-    use File::Temp qw/ :POSIX /;
+use File::Temp qw/ :POSIX /;
 
 binmode(STDIN, ":encoding(console_in)");
 binmode(STDOUT, ":encoding(console_out)");

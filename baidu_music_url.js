@@ -78,13 +78,25 @@ casper.eachThen(read_music_file(music_id), function(item){
                     var s = this.getHTML('body');
                     var song_info = JSON.parse(s);
                     var u = song_info[0]["file_list"][0];
-                    artist = format_song_string(song_info[0]['song_artist']);
+                    artist = format_song_string(song_info[0]['song_artist']).replace(/\s+$/,'');
                     title = format_song_string(song_info[0]['song_title']);
                     var album_img = song_info[0]["album_image_url"] || '#';
 
-                    var w_str = [ artist, title , u["kbps"], u["format"], 
-                u["url"].replace(/&amp;.*$/,''),
-                album_img ].join(" ");
+                    var info = {
+                        id: song_info[0]["song_id"], 
+                        artist: artist,
+                        title: title,
+                        kbps: u["kbps"],
+                        format: u["format"],
+                        url: u["url"].replace(/&.*$/,''),
+                        album_img: album_img
+                    };
+
+                    var w_str = JSON.stringify(info);
+
+                    //var w_str = [ artist, title , u["kbps"], u["format"], 
+                //u["url"].replace(/&amp;.*$/,''),
+                //album_img ].join(" ");
             if(music_url){
                 fs.write(music_url, w_str+"\n", 'a'); 
             }else{
@@ -92,10 +104,8 @@ casper.eachThen(read_music_file(music_id), function(item){
             }
                 });
             });
-
         }
     });
-
 
     casper.run();
 
