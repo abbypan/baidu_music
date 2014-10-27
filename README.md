@@ -76,8 +76,8 @@ music.txt 为音乐列表，一行一首，歌名在前（必填），歌手在�
 结果写入id.txt，如果不指定id.txt，则输出到stdout
 
 ```
-casperjs baidu_music_id.js music.txt id.txt
-casperjs baidu_music_id.js music.txt
+casperjs id.js music.txt id.txt
+casperjs id.js music.txt
 ```
 
 ### 指定关键字查询多首歌
@@ -87,22 +87,22 @@ casperjs baidu_music_id.js music.txt
 page : 取第几页（默认是取第1页）
 
 ```
-casperjs baidu_music_query.js "小楼古风精选 Finale" id.txt
-casperjs baidu_music_query.js "小楼古风精选 Finale"
-casperjs baidu_music_query.js "小楼古风精选 Finale" --page=2
+casperjs query.js "小楼古风精选 Finale" id.txt
+casperjs query.js "小楼古风精选 Finale"
+casperjs query.js "小楼古风精选 Finale" --page=2
 ```
 
 ### 获取专辑音乐id
 结果写入id_swd3e.txt，如果不指定id_swd3e.txt，则输出到stdout
 ```
-casperjs baidu_music_album.js http://music.baidu.com/album/23319159 id_swd3e.txt
+casperjs album.js http://music.baidu.com/album/23319159 id_swd3e.txt
 ```
 
 ### 收藏指定音乐
 ```
-casperjs baidu_music_collect.js cookie.txt id.txt
+casperjs collect.js cookie.txt id.txt
 ```
-![baidu_music_collect.png](baidu_music_collect.png)
+![collect.png](collect.png)
 
 
 ### 获取音乐文件url
@@ -111,16 +111,16 @@ level : 音质, 0 (最好) ~ 3 (最差)，默认取0
 format :  flac, mp3
 
 ```
-casperjs baidu_music_url.js id.txt url.txt
-casperjs baidu_music_url.js id.txt url.txt --level=1
-casperjs baidu_music_url.js id.txt url.txt --level=1 --format=mp3
+casperjs url.js id.txt url.txt
+casperjs url.js id.txt url.txt --level=1
+casperjs url.js id.txt url.txt --level=1 --format=mp3
 ```
 
 ### 生成指定格式的默认文件
 ```
-casperjs baidu_musc_write.js url.txt wget.bat --type=bat
-casperjs baidu_musc_write.js url.txt vlc.xspf --type=xspf
-casperjs baidu_musc_write.js url.txt win.ps1  --type=ps1
+casperjs write.js url.txt wget.bat --type=bat
+casperjs write.js url.txt vlc.xspf --type=xspf
+casperjs write.js url.txt win.ps1  --type=ps1
 ```
 
 安装
