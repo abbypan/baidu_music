@@ -14,13 +14,20 @@ baidu_music
 #登录并收藏
 perl baidu_music.pl -u someusr -p somepasswd -c cookie.txt -m music.txt -t collect
 
-#根据music.txt生成xspf（播放列表）/bat（wget批量下载）/ps1（powershell批量下载）
+#根据music.txt生成xspf（播放列表）
 perl baidu_music.pl -m music.txt -t xspf -o vlc.xspf
+
+#根据music.txt生成bat（wget批量下载）
 perl baidu_music.pl -m music.txt -t bat -o wget.bat
-perl baidu_music.pl -m music.txt -t ps1 -o web.ps1
+
+#根据music.txt生成html网页(浏览器打开html后down them all下载) 
+perl baidu_music.pl -m music.txt -t html -o web.html
+
+#根据music.txt生成online听歌数据
+perl baidu_music.pl -m music.txt -o online.json
 
 #根据id生成xspf
-perl baidu_music.pl -i music_id.txt -t ps1 -o web.ps1
+perl baidu_music.pl -i music_id.txt -t xspf -o web.xspf
 
 #根据album_url生成xspf
 perl baidu_music.pl -a http://music.baidu.com/album/177366 -t xspf -o lzs.xspf
@@ -66,7 +73,7 @@ album_url（专辑url） / music （音乐列表）
 - someusr 为用户名，somepasswd 为密码
 - cookie.txt 为存放该用户cookie的文件名
 ```
-casperjs baidu_login.js someusr somepasswd cookie.txt
+casperjs login.js someusr somepasswd cookie.txt
 ```
 
 ### 指定歌名(艺人)查询音乐id
