@@ -20,7 +20,7 @@ var music_id = casper.cli.get(0) ;
 var music_url = casper.cli.get(1);
 
 // 音质：0 (最好) ~ 3 (最差)
-var music_level =  casper.cli.get("level") || 0;
+var music_level =  casper.cli.get("level") || 2;
 
 // 格式：flac/mp3，也可以不指定
 var music_format =  casper.cli.get("format");  
@@ -37,15 +37,28 @@ casper.eachThen(read_music_file(music_id), function(item){
     var rate=0;
     if(song_id){
         var url = "http://musicmini.baidu.com/app/link/getLinks.php";
-        var param_str = '{"songId":"'+song_id+'","songAppend":"","linkType":1,"isLogin":1,"clientVer":"","isHq":1,"isCloud":0,"hasMV":1,"noFlac":0,"rate":0}';
-        var param = clientutils.encode(param_str);
+        var param = {
+            "songId":song_id,
+    "songsId":song_id,
+    "songsiId":song_id,
+    "songAppend":"",
+    "linkType":1,
+    "isLogin":1,
+    "clientVer":"",
+    "isHq":1,
+    "isCloud":0,
+    "hasMV":1,
+    "noFlac":0,
+    "rate":0
+        };
+        var param_str = JSON.stringify(param);
+        var param_s = clientutils.encode(param_str) ;
         this.thenOpen(url, {
             method: 'post', 
             data: {
-                'param' : param
+                'param' : param_s
             }
         }, function(){
-            //var song_info = eval(this.getHTML('body'));
             var s = this.getHTML('body');
             if(! s.match(/^\[/)) return;
             var song_info = JSON.parse(s);
@@ -65,17 +78,20 @@ casper.eachThen(read_music_file(music_id), function(item){
                 u = files[song_level];
             }
 
+        param.rate = u["kbps"];
+        param.linkType = 2;
+        var param_str = JSON.stringify(param);
+        var param_s = clientutils.encode(param_str) ;
+        console.log(param_s);
 
-            rate=u["kbps"];
             this.thenOpen(url, {
                 method: 'post', 
                 data: {
-                    'param' : clientutils.encode(
-                        '{"songId":"'+song_id+'","songAppend":"","linkType":2,"isLogin":1,"clientVer":"","isHq":1,"isCloud":0,"hasMV":1,"noFlac":0,"rate":'+rate+'}'
-                            )
+                    'param' : param_s
                         }
                 }, function(){
                     var s = this.getHTML('body');
+                    console.log(s);
                     var song_info = JSON.parse(s);
                     var u = song_info[0]["file_list"][0];
                     artist = format_song_string(song_info[0]['song_artist']).replace(/\s+$/,'');
@@ -94,14 +110,11 @@ casper.eachThen(read_music_file(music_id), function(item){
 
                     var w_str = JSON.stringify(info);
 
-                    //var w_str = [ artist, title , u["kbps"], u["format"], 
-                //u["url"].replace(/&amp;.*$/,''),
-                //album_img ].join(" ");
-            if(music_url){
-                fs.write(music_url, w_str+"\n", 'a'); 
-            }else{
-                console.log(w_str);
-            }
+                    if(music_url){
+                        fs.write(music_url, w_str+"\n", 'a'); 
+                    }else{
+                        console.log(w_str);
+                    }
                 });
             });
         }

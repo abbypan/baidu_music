@@ -26,7 +26,7 @@ casper.then(function(){
     var login_url = 'https://passport.baidu.com/v2/?login&amp;tpl=mn&amp;u=http%3A%2F%2Fwww.baidu.com%2F';
     this.open(login_url);
         this.wait(1000, function(){
-        this.click('#pass-user-login')
+        //this.click('#tang-pass-login')
         });
         this.thenEvaluate(function(usr,passwd) {
         document.querySelector('#TANGRAM__PSP_3__userName').setAttribute('value', usr);

@@ -20,6 +20,8 @@ phantom.cookies = JSON.parse(data);
 var id_file = casper.cli.get(1);
 var music_list = read_music_file(id_file);
 
+var act =  casper.cli.get(2) ? '收藏' : '已收藏';
+
 casper.start('http://music.baidu.com');
 casper.each(music_list, function(self, item){
         var song_id = item[2];
@@ -29,7 +31,7 @@ casper.each(music_list, function(self, item){
         this.thenOpen(collect_url, function(){
             //console.log("visit url : " + collect_url);
 
-            var collect_x  = x('//span[text()="收藏"]/parent::span/parent::a');
+            var collect_x  = x('//span[text()="' + act +'"]/parent::span/parent::a');
             if (this.exists(collect_x)) {
                 console.log("click collect button : "+song_id);
                 this.click(collect_x);
