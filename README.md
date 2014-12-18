@@ -10,7 +10,9 @@ baidu_music
 
 cookie信息取自浏览器，例如firefox里可以安装httpfox直接copy value
 
-# baidu_music.pl
+# 用法示例
+
+baidu_music.pl 做为总入口
 
 ```
 #根据music.txt生成xspf（播放列表）
@@ -37,7 +39,7 @@ perl baidu_music.pl -q "小楼古风精选 Finale" -t xspf -o finale.xspf -c coo
 perl baidu_music.pl -q "河图" -P 3 -t xspf -o ht.xspf -c cookie.txt
 ```
 
-参数说明：
+## 参数说明
 ```
 c : 指定cookie文件，或cookie文本内容
 
@@ -58,36 +60,7 @@ f : 音乐文件格式(flac/mp3)
 N : 查询完音乐url，不收藏
 ```
 
-# song.pl
-
-例如获取[辛晓琪《俩俩相忘》](http://music.baidu.com/song/246881/) 的flac音乐文件信息，并收藏
-
-perl song.pl -i 246881 -N 0 -f flac -c cookie.txt
-
-结合parallel可实现批量操作
-```
-#指定id.txt，批量 收藏/取消收藏
-parallel --no-notice -a id.txt -C ' ' perl song.pl -c cookie.txt -i {1} -d add -m "{2}"
-parallel --no-notice -a id.txt -C ' ' perl song.pl -c cookie.txt -i {1} -d del -m "{2}"
-
-#指定id.txt，批量查询音乐信息，写入info.txt
-parallel --no-notice -a id.txt -C ' ' perl song.pl -c cookie.txt -i {1} > info.txt
-```
-
-## 参数说明
-```
-i : 音乐id
-t : 动作，默认为 url(查询)，此外为 add(添加收藏)、del(取消收藏)
-z : 收藏/取消收藏完成时，补充输出的消息
-
-c : 同baidu_music.pl
-l : 同baidu_music.pl
-f : 同baidu_music.pl
-N : 同baidu_music.pl
-```
-
-处理过程
---------
+# 处理过程
 
 album_url（专辑url） / music.txt （每行歌名在前，歌手在后） / 查询关键字
 
@@ -97,8 +70,7 @@ album_url（专辑url） / music.txt （每行歌名在前，歌手在后） / �
 
 ->  xspf （播放列表）/ bat （调用wget批量下载）/ html （在浏览器访问下载) / online （在线听歌需要的json信息)
 
-动作分解
---------
+# 动作分解
 
 
 ## 指定歌名(艺人)查询音乐id
@@ -124,12 +96,39 @@ casperjs id_query.js "小楼古风精选 Finale"
 casperjs id_query.js "小楼古风精选 Finale" --page=2
 ```
 
-
 ## 获取专辑音乐id
 
 结果写入id_swd3e.txt，如果不指定id_swd3e.txt，则输出到stdout
 ```
 casperjs id_album.js http://music.baidu.com/album/23319159 id_swd3e.txt
+```
+
+## song.pl 根据id输出info
+
+例如获取[辛晓琪《俩俩相忘》](http://music.baidu.com/song/246881/) 的flac音乐文件信息，并收藏
+
+perl song.pl -i 246881 -N 0 -f flac -c cookie.txt
+
+结合parallel可实现批量操作
+```
+#指定id.txt，批量 收藏/取消收藏
+parallel --no-notice -a id.txt -C ' ' perl song.pl -c cookie.txt -i {1} -d add -m "{2}"
+parallel --no-notice -a id.txt -C ' ' perl song.pl -c cookie.txt -i {1} -d del -m "{2}"
+
+#指定id.txt，批量查询音乐信息，写入info.txt
+parallel --no-notice -a id.txt -C ' ' perl song.pl -c cookie.txt -i {1} > info.txt
+```
+
+### 参数说明
+```
+i : 音乐id
+t : 动作，默认为 url(查询)，此外为 add(添加收藏)、del(取消收藏)
+z : 收藏/取消收藏完成时，补充输出的消息
+
+c : 同baidu_music.pl
+l : 同baidu_music.pl
+f : 同baidu_music.pl
+N : 同baidu_music.pl
 ```
 
 ## 根据info.txt，生成目标文件
@@ -161,6 +160,10 @@ wget
 curl
 
 parallel
+
+perl
+
+cpan MIME::Base64 JSON::PP Encode::Locale File::Slurp Capture::Tiny
 
 # 问题
 

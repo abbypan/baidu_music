@@ -41,6 +41,7 @@ function music_xspf_cb(){
         item : function(m){
             return [ "<track>", 
                 "<location>" + m["url"]  + "</location>", 
+                "<duration>" + m["duration"]  + "</duration>", 
                 "<image>" + m["album_image_url"]  + "</image>", 
                 "<title>" + m["song_title"]  + "</title>", 
                 "<album>" + m["album_title"]  + "</album>", 
