@@ -11,8 +11,9 @@ use Capture::Tiny qw/ capture_merged/;
 
 our $DIR=$FindBin::RealBin;
 
+
 my %opt;
-getopt('clfNitz', \%opt);
+getopt('clfNitzs', \%opt);
 $opt{cookie} = $opt{c} || "$DIR/cookie.txt";
 $opt{cookie} = slurp($opt{cookie}) if(-f $opt{cookie});
 $opt{level} = $opt{l} || 0;
@@ -21,6 +22,7 @@ $opt{not_save_collect} = $opt{N} // 1;
 $opt{act} = $opt{t} // 'url'; 
 $opt{msg} = $opt{z} || '';
 my $song_id = $opt{i};
+our $COLLECTED_SONG = read_collected_song($opt{s});
 
 if($opt{act} eq 'url'){
     my $r = get_song_info($song_id, %opt);
@@ -31,15 +33,25 @@ if($opt{act} eq 'url'){
     print "finish $opt{act} collect $song_id $opt{msg}\n";
 }
 
+sub read_collected_song {
+    my ($f) = @_;
+    $f ||= 'collected.txt';
+    my $c = slurp($f);
+    my @song = split /\n/, $c;
+    s/\s+.*$// for @song;
+    my %song = map { $_ => 1 } @song;
+    return \%song;
+}
+
 sub get_song_info {
     my ($song_id, %opt) = @_;
-    collect_song($song_id, act => 'add', cookie => $opt{cookie});
+    collect_song($song_id, act => 'add', cookie => $opt{cookie}) unless(exists $COLLECTED_SONG->{$song_id});
     my $info = get_song_base_info($song_id);
     my $f = select_song_file($info, format => $opt{format}, level => $opt{level});
     $f->{url}  = get_song_url($song_id, cookie => $opt{cookie}, rate =>$f->{kbps}, format=> $f->{format});
     $info->{$_} = $f->{$_} for keys(%$f);
     delete($info->{file_list});
-    collect_song($song_id, act => 'del', cookie => $opt{cookie}) if($opt{not_save_collect});
+    collect_song($song_id, act => 'del', cookie => $opt{cookie}) if($opt{not_save_collect} and ! exists $COLLECTED_SONG->{$song_id});
     return $info;
 }
 

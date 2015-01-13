@@ -1,0 +1,10 @@
+
+wget -c "http://file.qianqian.com/data2/music/38349814/38349814.mp3?xcode=72e46d264c265fd331e457f407128a062f75b65820342021&amp;src="http%3A%2F%2Fpan.baidu.com%2Fshare%2Flink%3Fshareid%3D420545%26uk%3D3543494980"" -O "西游记-晴空月儿明.mp3"
+wget -c "http://zhangmenshiting.baidu.com/data2/music/57953143/57953143.mp3?xcode=72e46d264c265fd36f68d2cafd64c2b5b223cdf3c4df7385" -O "古巨基-春天.mp3"
+wget -c "http://zhangmenshiting.baidu.com/data2/music/33236832/33236832.flac?xcode=72e46d264c265fd3b5509f58b1417d2462c722e8b864879c" -O "周华健-刀剑如梦.flac"
+wget -c "http://zhangmenshiting.baidu.com/data2/music/59326981/59326981.flac?xcode=72e46d264c265fd3f4d2dfb6f0af58b2ae292dfb2414eb9e" -O "周华健-忘忧草.flac"
+wget -c "http://zhangmenshiting.baidu.com/data2/music/34182161/34182161.flac?xcode=72e46d264c265fd3478656f2cf33f82e4f3a1a41eb823c65" -O "青鸟飞鱼-此生不换.flac"
+wget -c "http://file.qianqian.com/data2/music/38364969/38364969.mp3?xcode=72e46d264c265fd38950068270c840cb3448e104464f5f64&amp;src="http%3A%2F%2Fpan.baidu.com%2Fshare%2Flink%3Fshareid%3D384361%26uk%3D3342165865"" -O "黄安-爱别离.mp3"
+wget -c "http://zhangmenshiting.baidu.com/data2/music/51489430/51489430.flac?xcode=72e46d264c265fd3b7ce4e94330f05c7511c279c8bbb71b1" -O "任贤齐-飞鸟.flac"
+wget -c "http://zhangmenshiting.baidu.com/data2/music/51476394/51476394.flac?xcode=72e46d264c265fd3de4f2ef66a93a0f14701e7e9ce40af17" -O "辛晓琪-俩俩相忘.flac"
+wget -c "http://file.qianqian.com/data2/music/39475790/39475790.mp3?xcode=72e46d264c265fd3c103dc6f7096e8d1397ab92b04d34fa3&amp;src="http%3A%2F%2Fpan.baidu.com%2Fshare%2Flink%3Fshareid%3D416364%26uk%3D4248151572"" -O "毛阿敏-相思.mp3"
