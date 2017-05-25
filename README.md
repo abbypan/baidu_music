@@ -1,3 +1,34 @@
+baidu_album.pl
+==============
+
+下载百度音乐专辑到本地
+
+install perl, curl
+
+    cpan App::cpanminus
+    cpanm -n -f Web::Scraper Encode::Locale
+
+perl baidu_album.pl [album_url]
+
+    perl baidu_album.pl http://music.baidu.com/album/177653 | tee baidu_album.log
+
+example album download log: [baidu_album.log](baidu_album.log)
+
+    > tree 张智霖-言不由衷
+    张智霖-言不由衷
+    ├── 01.忽然觉得好想你.mp3
+    ├── 02.言不由衷.mp3
+    ├── 03.释放.mp3
+    ├── 04.夜漆黑.mp3
+    ├── 05.爱了爱了.mp3
+    ├── 06.爱的时光.mp3
+    ├── 07.拥抱的感觉.mp3
+    ├── 08.我忘不了你.mp3
+    ├── 09.追寻.mp3
+    └── 10.知音.mp3
+
+    0 directories, 10 files
+
 baidu_music
 =================
 
